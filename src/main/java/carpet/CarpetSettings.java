@@ -207,6 +207,7 @@ public class CarpetSettings
                                   }).boolAccelerate(),
   rule("dragonEggBedrockRemoval", "experimental", "Reintroduce Dragon Egg Bedrock breaking"),
   rule("rconChatBridge",          "experimental survival", "Tweak rcon protocol to allow chat bridges using it").boolAccelerate(),
+  rule("dispenserSheepShearing",  "experimental", "Sheep can be sheared using dispensers with shears similar to 1.14 behaviour")
         };
         for (CarpetSettingEntry rule: RuleList)
         {
