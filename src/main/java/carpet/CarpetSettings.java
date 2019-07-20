@@ -126,6 +126,7 @@ public class CarpetSettings
   rule("commandScript",  "commands", "Enables /script command").isACommand()
                                 .extraInfo("a powerful in-game scripting API"),
   rule("commandPlayer",         "commands", "Enables /player command to control/spawn players").isACommand(),
+  rule("commandProfiler",        "commands", "Enables /profiler command to get tick/entity profile reports").isACommand(),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
   rule("missingTools",          "survival", "Pistons, Glass and Sponge can be broken faster with their appropriate tools"),
   rule("portalCaching",         "survival experimental", "Alternative, persistent caching strategy for nether portals"),

@@ -13,6 +13,7 @@ import carpet.commands.PlayerCommand;
 import carpet.commands.SpawnCommand;
 import carpet.commands.TestCommand;
 import carpet.commands.TickCommand;
+import carpet.commands.ProfilerCommand;
 import carpet.logging.LoggerRegistry;
 import carpet.script.CarpetScriptServer;
 import carpet.utils.HUDController;
@@ -65,6 +66,7 @@ public class CarpetServer // static for now - easier to handle all around the co
         PerimeterInfoCommand.register(dispatcher);
         DrawCommand.register(dispatcher);
         ScriptCommand.register(dispatcher);
+        ProfilerCommand.register(dispatcher);
 
         //TestCommand.register(dispatcher);
     }
