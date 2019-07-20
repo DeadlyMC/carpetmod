@@ -22,6 +22,7 @@ import carpet.utils.Messenger;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.TextComponentString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,6 +59,7 @@ public class CarpetSettings
     public static boolean b_movableTileEntities = false;
     public static boolean b_huskSpawningInTemples = false;
     public static boolean b_stackableShulkerBoxes = false;
+    public static boolean b_optimizeVoxelCode = false;
 
     private static CarpetSettingEntry rule(String s1, String s2, String s3) { return CarpetSettingEntry.create(s1,s2,s3);}
     
@@ -190,6 +192,17 @@ public class CarpetSettings
   rule("placementRotationFix",    "fix", "fixes block placement rotation issue when player rotates quickly while placing blocks"),
   rule("leadFix",                 "fix", "Fixes leads breaking/becoming invisible in unloaded chunks")
                                   .extraInfo("You may still get visibly broken leash links on the client side, but server side the link is still there."),
+  rule("optimizeVoxelCode",       "optimization", "optimizes the voxel code which is used by e.g. the entity movement")
+                                  .validate((s, rule) -> {
+                                      if (!CarpetSettings.getBool(rule))
+                                      {
+                                          VoxelShapes.FULL_CUBE = VoxelShapes.FULL_CUBE_OLD;
+                                      }
+                                      else
+                                      {
+                                          VoxelShapes.FULL_CUBE = VoxelShapes.FULL_CUBE_NEW;
+                                      }
+                                  }).boolAccelerate(),
         };
         for (CarpetSettingEntry rule: RuleList)
         {
