@@ -204,6 +204,7 @@ public class CarpetSettings
                                           VoxelShapes.FULL_CUBE = VoxelShapes.FULL_CUBE_NEW;
                                       }
                                   }).boolAccelerate(),
+  rule("dragonEggBedrockRemoval", "experimental", "Reintroduce Dragon Egg Bedrock breaking"),
         };
         for (CarpetSettingEntry rule: RuleList)
         {
