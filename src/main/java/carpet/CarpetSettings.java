@@ -60,6 +60,7 @@ public class CarpetSettings
     public static boolean b_huskSpawningInTemples = false;
     public static boolean b_stackableShulkerBoxes = false;
     public static boolean b_optimizeVoxelCode = false;
+    public static boolean b_rconChatBridge = false;
 
     private static CarpetSettingEntry rule(String s1, String s2, String s3) { return CarpetSettingEntry.create(s1,s2,s3);}
     
@@ -205,6 +206,7 @@ public class CarpetSettings
                                       }
                                   }).boolAccelerate(),
   rule("dragonEggBedrockRemoval", "experimental", "Reintroduce Dragon Egg Bedrock breaking"),
+  rule("rconChatBridge",          "experimental survival", "Tweak rcon protocol to allow chat bridges using it").boolAccelerate(),
         };
         for (CarpetSettingEntry rule: RuleList)
         {

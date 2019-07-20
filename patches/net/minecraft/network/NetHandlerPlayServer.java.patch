@@ -9,7 +9,17 @@
  import com.google.common.primitives.Doubles;
  import com.google.common.primitives.Floats;
  import com.google.common.util.concurrent.Futures;
-@@ -296,6 +299,12 @@
+@@ -102,7 +105,9 @@
+ import net.minecraft.network.play.server.SPacketPlayerPosLook;
+ import net.minecraft.network.play.server.SPacketSetSlot;
+ import net.minecraft.network.play.server.SPacketTabComplete;
++import net.minecraft.network.rcon.RConThreadMain;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.tileentity.CommandBlockBaseLogic;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityCommandBlock;
+@@ -296,6 +301,12 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
          this.player.setEntityActionState(packetIn.getStrafeSpeed(), packetIn.getForwardSpeed(), packetIn.isJumping(), packetIn.isSneaking());
@@ -22,7 +32,7 @@
      }
  
      private static boolean isMovePlayerPacketInvalid(CPacketPlayer packetIn)
-@@ -831,6 +840,12 @@
+@@ -831,6 +842,12 @@
                          double d10 = this.player.motionX * this.player.motionX + this.player.motionY * this.player.motionY + this.player.motionZ * this.player.motionZ;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -35,7 +45,7 @@
                          if (this.player.isPlayerSleeping())
                          {
                              if (d11 > 1.0D)
-@@ -849,7 +864,8 @@
+@@ -849,7 +866,8 @@
                                  i = 1;
                              }
  
@@ -45,7 +55,7 @@
                              {
                                  float f2 = this.player.isElytraFlying() ? 300.0F : 100.0F;
  
-@@ -869,6 +885,8 @@
+@@ -869,6 +887,8 @@
                              if (this.player.onGround && !packetIn.isOnGround() && d8 > 0.0D)
                              {
                                  this.player.jump();
@@ -54,7 +64,7 @@
                              }
  
                              this.player.move(MoverType.PLAYER, d7, d8, d9);
-@@ -1006,6 +1024,9 @@
+@@ -1006,6 +1026,9 @@
                      {
                          if (!this.server.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
                          {
@@ -64,7 +74,7 @@
                              this.player.interactionManager.startDestroyBlock(blockpos, packetIn.getFacing());
                          }
                          else
-@@ -1052,6 +1073,8 @@
+@@ -1052,6 +1075,8 @@
          {
              if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && !this.server.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
              {
@@ -73,7 +83,7 @@
                  this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
              }
          }
-@@ -1073,6 +1096,9 @@
+@@ -1073,6 +1098,9 @@
          ItemStack itemstack = this.player.getHeldItem(enumhand);
          this.player.markPlayerActive();
  
@@ -83,7 +93,42 @@
          if (!itemstack.isEmpty())
          {
              this.player.interactionManager.processRightClick(this.player, worldserver, itemstack, enumhand);
-@@ -1250,19 +1276,25 @@
+@@ -1123,7 +1151,18 @@
+     {
+         LOGGER.info("{} lost connection: {}", this.player.getName().getString(), reason.getString());
+         this.server.refreshStatusNextTick();
+-        this.server.getPlayerList().sendMessage((new TextComponentTranslation("multiplayer.player.left", this.player.getDisplayName())).applyTextStyle(TextFormatting.YELLOW));
++        //this.server.getPlayerList().sendMessage((new TextComponentTranslation("multiplayer.player.left", this.player.getDisplayName())).applyTextStyle(TextFormatting.YELLOW));
++        TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("multiplayer.player.left", new Object[] {this.player.getDisplayName()});
++        this.server.getPlayerList().sendMessage(textcomponenttranslation.applyTextStyle(TextFormatting.YELLOW));
++    
++        // [CM] Rcon chat bridge - send message when player disconnects
++        if (CarpetSettings.b_rconChatBridge)
++        {
++            RConThreadMain rconThread = ((DedicatedServer)this.server).rconThread;
++            if (rconThread != null)
++                rconThread.sendMessageCarpetChatBridge(textcomponenttranslation.getUnformattedComponentText());
++        }
++        
+         this.player.disconnect();
+         this.server.getPlayerList().playerLoggedOut(this.player);
+ 
+@@ -1219,6 +1258,14 @@
+             {
+                 ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.player.getDisplayName(), s);
+                 this.server.getPlayerList().sendMessage(itextcomponent, false);
++    
++                // [CM] Rcon Chat bridge
++                if (CarpetSettings.b_rconChatBridge)
++                {
++                    RConThreadMain rconThread = ((DedicatedServer) this.server).rconThread;
++                    if (rconThread != null)
++                        rconThread.sendMessageCarpetChatBridge(itextcomponent.getUnformattedComponentText());
++                }
+             }
+ 
+             this.chatSpamThresholdCount += 20;
+@@ -1250,19 +1297,25 @@
          switch (packetIn.getAction())
          {
              case START_SNEAKING:
@@ -109,7 +154,7 @@
                  if (this.player.isPlayerSleeping())
                  {
                      this.player.wakeUpPlayer(false, true, true);
-@@ -1303,6 +1335,8 @@
+@@ -1303,6 +1356,8 @@
                  break;
              case START_FALL_FLYING:
  
@@ -118,7 +163,7 @@
                  if (!this.player.onGround && this.player.motionY < 0.0D && !this.player.isElytraFlying() && !this.player.isInWater())
                  {
                      ItemStack itemstack = this.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-@@ -1345,6 +1379,9 @@
+@@ -1345,6 +1400,9 @@
                  if (packetIn.getAction() == CPacketUseEntity.Action.INTERACT)
                  {
                      EnumHand enumhand = packetIn.getHand();
@@ -128,7 +173,7 @@
                      this.player.interactOn(entity, enumhand);
                  }
                  else if (packetIn.getAction() == CPacketUseEntity.Action.INTERACT_AT)
-@@ -1360,6 +1397,8 @@
+@@ -1360,6 +1418,8 @@
                          this.server.logWarning("Player " + this.player.getName().getString() + " tried to attack an invalid entity");
                          return;
                      }

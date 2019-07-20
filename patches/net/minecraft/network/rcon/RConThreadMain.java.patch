@@ -1,0 +1,17 @@
+--- a/net/minecraft/network/rcon/RConThreadMain.java
++++ b/net/minecraft/network/rcon/RConThreadMain.java
+@@ -55,7 +55,13 @@
+     {
+         this.clientThreads = Maps.newHashMap();
+     }
+-
++    
++    // [CM] New method for rcon chat bridge
++    public void sendMessageCarpetChatBridge(String text)
++    {
++        this.clientThreads.forEach((s, r) -> r.sendMessageCarpetChatBridge(text));
++    }
++    
+     private void cleanClientThreadsMap()
+     {
+         Iterator<Entry<SocketAddress, RConThreadClient>> iterator = this.clientThreads.entrySet().iterator();
