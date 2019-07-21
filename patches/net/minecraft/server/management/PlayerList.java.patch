@@ -44,7 +44,7 @@
 +        {
 +            RConThreadMain rconThread = ((DedicatedServer) this.server).rconThread;
 +            if (rconThread != null)
-+                rconThread.sendMessageCarpetChatBridge(itextcomponent.getUnformattedComponentText());
++                rconThread.sendMessageCarpetChatBridge(itextcomponent.getFormattedText());
 +        }
  
          this.sendMessage(itextcomponent.applyTextStyle(TextFormatting.YELLOW));

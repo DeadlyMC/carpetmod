@@ -107,7 +107,7 @@
 +        {
 +            RConThreadMain rconThread = ((DedicatedServer)this.server).rconThread;
 +            if (rconThread != null)
-+                rconThread.sendMessageCarpetChatBridge(textcomponenttranslation.getUnformattedComponentText());
++                rconThread.sendMessageCarpetChatBridge(textcomponenttranslation.getFormattedText());
 +        }
 +        
          this.player.disconnect();
@@ -123,7 +123,7 @@
 +                {
 +                    RConThreadMain rconThread = ((DedicatedServer) this.server).rconThread;
 +                    if (rconThread != null)
-+                        rconThread.sendMessageCarpetChatBridge(itextcomponent.getUnformattedComponentText());
++                        rconThread.sendMessageCarpetChatBridge(itextcomponent.getFormattedText());
 +                }
              }
  
