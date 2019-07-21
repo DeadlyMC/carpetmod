@@ -9,9 +9,22 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.entity.item.EntityFallingBlock;
-@@ -74,7 +76,10 @@
+@@ -66,15 +68,20 @@
+                 }
  
-                 if (blockpos.getY() > 0)
+                 BlockPos blockpos;
+-
+-                for (blockpos = pos.down(); canFallThrough(worldIn.getBlockState(blockpos)) && blockpos.getY() > 0; blockpos = blockpos.down())
++                int minY = CarpetSettings.getBool("dragonEggBedrockRemoval") && CarpetSettings.getBool("dragonEggBedrockRemoval.Y0") && this instanceof BlockDragonEgg ? -1 : 0;
++    
++                // [CM] Y0 dragon egg breaking - replaced 0 with minY
++                for (blockpos = pos.down(); canFallThrough(worldIn.getBlockState(blockpos)) && blockpos.getY() > /* 0 */ minY; blockpos = blockpos.down())
+                 {
+                     ;
+                 }
+ 
+-                if (blockpos.getY() > 0)
++                if (blockpos.getY() > /* 0 */ minY) // [CM] Y0 dragon egg breaking - replaced 0 with minY
                  {
 -                    worldIn.setBlockState(blockpos.up(), this.getDefaultState());
 +                    // [CM] reintroduce dragon egg bedrock breaking
